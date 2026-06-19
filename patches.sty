@@ -1,48 +1,61 @@
-% Addition of several patches
+% patches.sty -- enhancements for the JFM LaTeX template, re-derived for the
+% 2025 official template (JFM-FLM_Au.cls).  Load it in the preamble with
+%
+%     \usepackage{patches}
+%
+% and select the enhanced bibliography style with
+%
+%     \bibliographystyle{jfm_jabbrv}
+%
+% Marie-Jean Thoraval (mjthoraval@gmail.com).
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{patches}
+\ProvidesPackage{patches}[2025/06/18 JFM template enhancements: jabbrv + DOI/year hyperlinks]
 
-% hyperref for links
-\usepackage[breaklinks=true,dvipdfm,colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,hypertexnames=false]{hyperref}
-
-% jabbrv for journal abbreviations
-% Remove ``[warnundef]'' to get rid of undefined abbreviation warnings:
-\usepackage[warnundef]{jabbrv} % Use jfm_jabbrv.bst in \bibliographystyle instead of jfm.bst
-% Additional list to prevent the warning of non-abbreviated journal title words, or for custom abbreviations
-% Added here so that the package jabbrv.sty can be updated from GitHub: https://github.com/compholio/jabbrv
+% ---------------------------------------------------------------------------
+% Journal-title abbreviation
+% ---------------------------------------------------------------------------
+% jfm_jabbrv.bst wraps every journal name in \JournalTitle{...}; the jabbrv
+% package turns that into the ISO-4 abbreviation (e.g. "Journal of Fluid
+% Mechanics" -> "J. Fluid Mech.").  Remove [warnundef] to silence the
+% "abbreviation not found" warnings for words jabbrv does not know.
+\usepackage[warnundef]{jabbrv}
+% Project-specific / custom abbreviations live in jabbrv-jfm.ldf, kept separate
+% so that jabbrv.sty itself can be updated from
+% https://github.com/compholio/jabbrv without losing them.
 \makeatletter
 \InputIfFileExists{jabbrv-jfm.ldf}{}{%
-	\@latex@error{Abbreviation language `jabbrv-jfm.ldf' not found}{Select a valid language and recompile.}%
+  \@latex@error{Abbreviation file `jabbrv-jfm.ldf' not found}%
+               {Put jabbrv-jfm.ldf next to your .tex file and recompile.}%
 }
 \makeatother
 
-\graphicspath{{Figures/}} % To store figures in a subfolder to be more clear
-\usepackage{siunitx} % https://www.dpg-physik.de/dpg/gliederung/junge/rg/wuerzburg/Archiv/WS%202011-12/LaTeX/siunitx.pdf
-\usepackage[all]{hypcap} % To get links to figures and not its caption
-\usepackage{dcolumn}   % Aligning columns on a decimal point
-\usepackage{latexsym}
-\usepackage[utf8]{inputenc} % For French characters
-\usepackage[T1]{fontenc} % For French characters
-\usepackage{comment} % To comment some large sections
+% ---------------------------------------------------------------------------
+% Reference and citation hyperlinks
+% ---------------------------------------------------------------------------
+% JFM-FLM_Au.cls already loads hyperref (and breakurl, and natbib), so we must
+% NOT load hyperref again with options (that would raise an option clash) --
+% we only adjust its settings here.
+\hypersetup{breaklinks=true,colorlinks=true,%
+            linkcolor=blue,citecolor=blue,urlcolor=blue,%
+            hypertexnames=false}
+\usepackage[all]{hypcap} % make links jump to the figure, not its caption
 
-% Patches for natbib.sty, version 2010/09/13 8.31b
-% To show the hyperlink only on the year in the text, as in the published version of the articles
-% https://tex.stackexchange.com/questions/23227/how-to-hyperlink-only-the-year-part-when-using-natbib-and-hyperref
-\usepackage{natbib} % Must be added before the patches, otherwise the jfm.cls over-writes the patch
+% Show the citation hyperlink on the YEAR only (as in the published articles),
+% instead of the whole "Author (year)".  Patches natbib's \NAT@citex.
+% https://tex.stackexchange.com/questions/23227
+% natbib is already loaded by the class; the bundled natbib.sty (v8.31b) is the
+% version these patches were written against.
 \usepackage{etoolbox}
-
 \makeatletter
-
-% Patch case where name and year are separated by aysep
 \patchcmd{\NAT@citex}
   {\@citea\NAT@hyper@{%
      \NAT@nmfmt{\NAT@nm}%
      \hyper@natlinkbreak{\NAT@aysep\NAT@spacechar}{\@citeb\@extra@b@citeb}%
      \NAT@date}}
   {\@citea\NAT@nmfmt{\NAT@nm}%
-   \NAT@aysep\NAT@spacechar\NAT@hyper@{\NAT@date}}{}{}
-
-% Patch case where name and year are separated by opening bracket
+   \NAT@aysep\NAT@spacechar\NAT@hyper@{\NAT@date}}
+  {}
+  {\PackageWarning{patches}{NAT@citex year-link patch 1 did not apply (natbib changed?)}}
 \patchcmd{\NAT@citex}
   {\@citea\NAT@hyper@{%
      \NAT@nmfmt{\NAT@nm}%
@@ -51,11 +64,17 @@
      \NAT@date}}
   {\@citea\NAT@nmfmt{\NAT@nm}%
    \NAT@spacechar\NAT@@open\if*#1*\else#1\NAT@spacechar\fi\NAT@hyper@{\NAT@date}}
-  {}{}
-
+  {}
+  {\PackageWarning{patches}{NAT@citex year-link patch 2 did not apply (natbib changed?)}}
 \makeatother
 
-
+% ---------------------------------------------------------------------------
+% Optional author conveniences (uncomment what you need)
+% ---------------------------------------------------------------------------
+% \usepackage{siunitx}        % \SI{1.2}{\metre\per\second}
+% \usepackage{dcolumn}        % align table columns on the decimal point
+% \usepackage{comment}        % \begin{comment}...\end{comment}
+% \usepackage{latexsym}
+% \graphicspath{{Figures/}}   % keep figures in a Figures/ subfolder
 
 \endinput
-
