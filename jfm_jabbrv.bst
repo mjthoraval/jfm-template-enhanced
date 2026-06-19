@@ -1,17 +1,16 @@
-% Small modifications of Marie-Jean Thoraval.
-% Replace the first name of authors in the References with their first name initials:
-% https://tex.stackexchange.com/questions/131087/displaying-authors-name-in-a-bibliographic-entry-in-the-form-surname-first-in
-% Replace with et al. if more than 10 authors:
-% https://tex.stackexchange.com/questions/26575/bibtex-how-can-i-automatically-reduce-long-author-lists-to-xxx-et-al
-% Fixed the case of ``others'' used in authors list, by adding \au{others}
-% Compare with original unsrt.bst: http://ftp.cs.stanford.edu/tex/bibtex/unsrt.bst
-% https://text-compare.com/ or https://www.diffchecker.com/
-% Added the journal abbreviations: http://www.compholio.com/latex/jabbrv/
-% https://github.com/compholio/jabbrv
-% https://tex.stackexchange.com/questions/33441/how-to-abbreviate-journal-name-in-citation
-% Do not add arXiv if the paper is published: FUNCTION {format.eprint}
-% Removed empty ', ,' when empty series for FUNCTION {format.bvolume}
-% Add DOI links: http://tex.stackexchange.com/questions/3802/how-to-get-doi-links-in-bibliography
+% Enhancements by Marie-Jean Thoraval (mjthoraval@gmail.com), re-derived for the
+% 2025 official JFM template (jfm.bst shipped with JFM-FLM_Au.cls):
+% - Replace authors' first names with initials in the reference list:
+%   https://tex.stackexchange.com/questions/131087/displaying-authors-name-in-a-bibliographic-entry-in-the-form-surname-first-in
+% - Replace overflowing author lists with "et al." when more than 10 authors:
+%   https://tex.stackexchange.com/questions/26575/bibtex-how-can-i-automatically-reduce-long-author-lists-to-xxx-et-al
+% - Fix the "others" case in author lists, by emitting \au{others}.
+% - Abbreviate journal titles via the jabbrv package (\JournalTitle{...}):
+%   https://github.com/compholio/jabbrv  http://www.compholio.com/latex/jabbrv/
+% - Do not print an arXiv eprint once the paper is published (FUNCTION format.eprint).
+% - Remove the empty ", ," when series is empty (FUNCTION format.bvolume).
+% - Add DOI/URL hyperlinks in the reference list (DOI first, then URL):
+%   https://tex.stackexchange.com/questions/3802/how-to-get-doi-links-in-bibliography
 
 %% v1.0 (SGLS) 12/97
 % Stefan Llewellyn Smith, sgls1@damtp.cam.ac.uk
@@ -79,7 +78,6 @@ ENTRY
      doi
      edition
      editor
-     eprint
      howpublished
      institution
      journal
@@ -97,6 +95,7 @@ ENTRY
      url
      volume
      year
+     eprint
    }
    {}
    { label extra.label sort.label short.list }
@@ -502,36 +501,34 @@ INTEGERS { nameptr namesleft numnames }
 
 FUNCTION {format.names}
 { 's :=
-  #1 'nameptr :=
-  s num.names$ 'numnames :=
-  numnames 'namesleft :=
-    { namesleft #0 > }
-    { s nameptr "{vv~}{ll}{, jj}{, f.}" format.name$ cmd@author 't :=
-      nameptr #1 >
-        { nameptr #1
-          #1 + =
-          numnames #10
-          > and
-            { "\au{others}" 't :=
-              #1 'namesleft := }
-            'skip$
-          if$
-          namesleft #1 >
-            { ", " * t * }
-            {
-              t "\au{others}" =
-                { " " * "et~al." emphasize * }
-                { " \& " * t * }
-              if$
-            }
-          if$
-        }
-        't
-      if$
-      nameptr #1 + 'nameptr :=
-      namesleft #1 - 'namesleft :=
-    }
-  while$
+   #1 'nameptr :=
+   s num.names$ 'numnames :=
+   numnames 'namesleft :=
+     { namesleft #0 > }
+     { s nameptr "{vv~}{ll}{, jj}{, f.}" format.name$ cmd@author 't :=
+       nameptr #1 >
+         { nameptr #1 #1 + =
+           numnames #10 > and
+             { "\au{others}" 't :=
+               #1 'namesleft := }
+             'skip$
+           if$
+           namesleft #1 >
+             { ", " * t * }
+             {
+               t "\au{others}" =
+                 { " " * "et~al." emphasize * }
+                 { " \& " * t * }
+               if$
+             }
+           if$
+         }
+         't
+       if$
+       nameptr #1 + 'nameptr :=
+       namesleft #1 - 'namesleft :=
+     }
+   while$
 }
 
 FUNCTION {format.names.ed}
@@ -541,7 +538,6 @@ FUNCTION {format.names.ed}
    numnames 'namesleft :=
      { namesleft #0 > }
      { s nameptr
-%       "{ff~}{vv~}{ll}{, jj}"
        "{f.~}{vv~}{ll}{, jj}"
        format.name$ 't :=
        nameptr #1 >
@@ -783,15 +779,15 @@ FUNCTION {either.or.check}
 FUNCTION {format.bvolume}
 % Changed (SGLS)
 % Notes swap$ fudge
+% Enhanced: no empty ", ," when the series is empty.
 { volume empty$
      { "" }
      { series empty$
         { bbl.volume volume tie.or.space.connect cmd@volume }
         { series cmd@seriestitle
-					swap$ bbl.volume volume tie.or.space.connect output cmd@volume
-				}
+          swap$ bbl.volume volume tie.or.space.connect output cmd@volume
+        }
       if$
-      %swap$ bbl.volume volume tie.or.space.connect output cmd@volume
      }
    if$
 }
@@ -933,16 +929,15 @@ FUNCTION {format.pages}
 { pages empty$
      { "" }
      { pages multi.page.check
-         { bbl.pages pages n.dashify tie.or.space.connect }
-         { bbl.page pages tie.or.space.connect }
+         { pages n.dashify }
+         { pages }
        if$
        cmd@pages
      }
    if$
 }
 
-% Select only the first url
-% Doesn't work if the first url contains a white space
+% Select only the first url (stops at the first whitespace).
 % http://tex.stackexchange.com/questions/28102/use-character-substitution-in-bibtex-bst-file
 STRINGS{text}
 FUNCTION{format.url}
@@ -957,9 +952,12 @@ FUNCTION{format.url}
   while$
 }
 
-% Add DOI: Modified from the link below to include the url if there is no DOI
+% Add DOI/URL hyperlink: prefer the DOI, fall back to the URL, none if neither.
 % https://tex.stackexchange.com/questions/3802/how-to-get-doi-links-in-bibliography
 FUNCTION {hyperlink}
+% Wrap the supplied anchor text in a DOI/URL link (DOI first, else URL).  The
+% link is only ever placed on existing text (the anchor) -- never as a bare URL.
+% Callers choose the anchor: volume/pages, paper/report number, "PhD thesis", etc.
 { duplicate$ empty$
   { pop$ "" }
   { doi empty$
@@ -1121,15 +1119,18 @@ FUNCTION {format.publisher}
 }
 
 FUNCTION {format.eprint}
+% Enhanced: do not print an arXiv eprint once the paper is published (has a volume).
 { volume empty$
-    {eprint empty$
-      { "" }
-      { ", " * eprint cmd@arxiv * ""}
-    if$}
-		{ "" }
-	if$
+     { eprint empty$
+         { "" }
+         { ", " * eprint cmd@arxiv * ""}
+       if$
+     }
+     { "" }
+   if$
 }
 
+% Enhanced: wrap the journal name in \JournalTitle{} so jabbrv abbreviates it.
 FUNCTION {format.journal}
 {
   "{\JournalTitle{" journal * "}}" *
@@ -1144,11 +1145,15 @@ FUNCTION {article}
    format.title "title" output.check  cmd@atitle
    new.sentence
    crossref missing$
-     { format.journal cmd@jtitle
-%       emphasize
-       "journal" output.check
-       add.blank
-       format.vol.num.pages output
+     { volume empty$ pages empty$ and number empty$ and
+         { format.journal hyperlink cmd@jtitle    % no vol/num/pages: link the journal (paper no.)
+           "journal" output.check }
+         { format.journal cmd@jtitle
+%          emphasize
+           "journal" output.check
+           add.blank
+           format.vol.num.pages output }           % link sits on the volume/pages
+       if$
      }
      { format.article.crossref output.nonnull
      }
@@ -1263,7 +1268,7 @@ FUNCTION {incollection}
 %      format.edition output
        format.chapter.pages output
        hyperlink
-       new.sentence
+   new.sentence
        format.publisher
      }
      { format.incoll.inproc.crossref output.nonnull
@@ -1290,7 +1295,7 @@ FUNCTION {inproceedings}
        format.number.series output
        format.pages output
        hyperlink
-       new.sentence
+    new.sentence
        publisher empty$
          { organization output
            address output
@@ -1338,7 +1343,7 @@ FUNCTION {mastersthesis}
    date.block
    format.title "title" output.check
    new.sentence
-   bbl.mthesis format.thesis.type output.nonnull
+   bbl.mthesis format.thesis.type hyperlink output.nonnull
    school "school" output.check
    address output
    format.note output
@@ -1367,7 +1372,7 @@ FUNCTION {phdthesis}
    date.block
    format.title "title" output.check cmd@atitle
    new.sentence
-   bbl.phdthesis format.thesis.type output.nonnull
+   bbl.phdthesis format.thesis.type hyperlink output.nonnull
    school "school" output.check
    address output
    format.note output
@@ -1400,7 +1405,7 @@ FUNCTION {techreport}
    date.block
    format.title "title" output.check cmd@bktitle
    new.sentence
-   format.tr.number output.nonnull
+   format.tr.number hyperlink output.nonnull
    new.sentence
    institution "institution" output.check cmd@org
    address output
