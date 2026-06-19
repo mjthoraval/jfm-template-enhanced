@@ -77,14 +77,34 @@ changes below) and `patches.sty`:
 | `Fig1.eps`, `Fig2.eps` | Cambridge, 2025 | figures used by `FLMguide.tex` |
 | `test_bibliography.py` | this repo | checks the inline and `\bibliography{jfm}` configs compile and produce an identical reference list |
 
-## Credits and licensing
+## Provenance, modifications & licensing
 
-- The JFM class and BibTeX style are © Cambridge University Press and may only
-  be used to prepare papers for Cambridge journals. They are included here
-  unmodified for convenience.
-- `jabbrv` and its LTWA abbreviation lists are by Marco Cuoghi / contributors,
-  from <https://github.com/compholio/jabbrv>.
-- `natbib` is by Patrick W. Daly.
-- The enhancements in `jfm_jabbrv.bst` and `patches.sty` are by
-  Marie-Jean Thoraval. Originally derived in 2018 from the then-current JFM
-  template and re-derived in 2025 against the official `JFM-FLM_Au.cls` template.
+Every file records its own origin and changes in its header; this is the summary.
+
+**Unmodified Cambridge files** — © Cambridge University Press, for use only in
+preparing papers for Cambridge journals; included verbatim from the 2025 JFM
+author-materials page: `JFM-FLM_Au.cls`, `jfm.bst`, `lineno-FLM.sty` (Cambridge's
+wrapper around the `lineno` package), `Fig1.eps`, `Fig2.eps`.
+
+**Cambridge files adapted here** (each carries a header listing its changes):
+- `jfm.bib` — Cambridge's example database (`jfm2esam.bib`); DOIs/URLs added and a
+  few example references corrected (Batchelor, Brownell, Ursell, Briukhanov, …).
+- `FLMguide.tex` / `FLMguide.pdf` — Cambridge's author guide, with
+  `\usepackage{patches}`, the bibliography switched to the generated inline `.bbl`,
+  and one added citation/note so the guide obeys the JFM "every reference must be
+  cited" rule.
+
+**Third-party packages, bundled unmodified:**
+- `jabbrv.sty`, `jabbrv-ltwa-*.ldf` — © **Erich Hoover**, latest from
+  <https://github.com/compholio/jabbrv> (journal-abbreviation engine + ISO-4 lists).
+- `natbib.sty` — © **Patrick W. Daly** (v8.31b, the version the year-only patch targets).
+
+**Enhancements by Marie-Jean Thoraval** (first derived 2018, re-derived 2025 against
+`JFM-FLM_Au.cls`):
+- `jfm_jabbrv.bst` — a modified copy of `jfm.bst` (which keeps its original
+  jfm.bst / merlin.mbs header, P.W. Daly): author initials, "et al." for >10 authors,
+  journal abbreviation via jabbrv, DOI/URL links anchored on text, no "pp.", and more.
+- `patches.sty` — loads jabbrv, sets the hyperlink options, and patches natbib for
+  year-only citation links.
+- `jabbrv-jfm.ldf` — custom JFM journal abbreviations, under the LaTeX Project Public
+  License (LPPL 1.3c).

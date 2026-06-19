@@ -1,3 +1,16 @@
+% FLMguide.tex -- the official Journal of Fluid Mechanics author guide (Cambridge,
+% 2025), adapted by M.-J. Thoraval to demonstrate the enhanced bibliography style.
+% Changes from the official guide:
+%  - \usepackage{patches} (loads jabbrv + the DOI/year hyperlink setup);
+%  - the reference list is generated from jfm.bib via jfm_jabbrv.bst and pasted
+%    inline (between the BEGIN/END-INLINE-BBL markers), replacing the hand-written
+%    thebibliography; a \bibliography{jfm} variant is documented alongside it;
+%  - added a citation for Edwards et al. (2017) plus a note, so the guide obeys the
+%    JFM rule that every listed reference is cited -- Abramowitz & Barker are left
+%    uncited to show that uncited entries do not appear;
+%  - minor corrections to the example references (see jfm.bib).
+% The body of the document is otherwise Cambridge's, unchanged.
+%
 %\documentclass[lineno]{jfm}
 \documentclass[lineno]{JFM-FLM_Au}
 \usepackage{patches} % jabbrv (journal abbreviation) + DOI/year hyperlinks; required by the generated bibliography

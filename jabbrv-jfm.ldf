@@ -10,6 +10,11 @@
 %% The latest version of this license is available at
 %%   http://www.latex-project.org/lppl.txt
 %% =============================================
+%%
+%% 2025 update (M.-J. Thoraval): replaced the non-breaking spaces (~) and escaped
+%% spaces (\ ) in the abbreviation replacements with ordinary spaces -- the current
+%% jabbrv (E. Hoover) renders those as literal @NBSP@/@SPACE@ placeholders -- and
+%% corrected the AIAA 2007 paper number.  Custom JFM journal abbreviations follow.
 
 % Add here to prevent the warning of non-abbreviated journal title words, or for custom abbreviations
 % Data from one of the two sources:

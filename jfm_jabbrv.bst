@@ -11,6 +11,14 @@
 % - Remove the empty ", ," when series is empty (FUNCTION format.bvolume).
 % - Add DOI/URL hyperlinks in the reference list (DOI first, then URL):
 %   https://tex.stackexchange.com/questions/3802/how-to-get-doi-links-in-bibliography
+% - Anchor every DOI/URL hyperlink on existing text only -- volume/pages, the
+%   paper or report number, or "PhD thesis" -- never as a bare URL.
+% - Use the published JFM page style: drop "pp."/"p." (FUNCTION format.pages);
+%   hyphen page ranges become en-dashes (n.dashify).
+%
+% This file is a MODIFIED COPY of the official jfm.bst (shipped with JFM-FLM_Au.cls,
+% Cambridge 2025); the jabbrv package it targets is by Erich Hoover.  The unmodified
+% original header follows below (SGLS 1997; generated from merlin.mbs, P.W. Daly).
 
 %% v1.0 (SGLS) 12/97
 % Stefan Llewellyn Smith, sgls1@damtp.cam.ac.uk
