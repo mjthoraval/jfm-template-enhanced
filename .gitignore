@@ -1,0 +1,21 @@
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex*
+*.lnos
+*.fls
+*.fdb_latexmk
+*-eps-converted-to.pdf
+texput.log
+
+# test_bibliography.py scratch (auto-cleaned, ignored in case a run is interrupted)
+_gen.*
+_A.*
+_B.*
+
+# Local archive of superseded 2017 files + scratch (kept locally, not in the repo)
+/archive/
+/_official-2025-reference/
