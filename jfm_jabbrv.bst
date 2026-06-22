@@ -1140,8 +1140,10 @@ FUNCTION {format.eprint}
 
 % Enhanced: wrap the journal name in \JournalTitle{} so jabbrv abbreviates it.
 FUNCTION {format.journal}
-{
-  "{\JournalTitle{" journal * "}}" *
+{ journal empty$
+     { "" }
+     { "{\JournalTitle{" journal * "}}" * }
+   if$
 }
 
 FUNCTION {article}
